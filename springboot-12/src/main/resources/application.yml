@@ -1,0 +1,21 @@
+server:
+  port: 8080
+#\u9009\u62E9\u8981\u6FC0\u6D3B\u90A3\u4E2A\u73AF\u5883\u5757
+spring:
+  profiles:
+    active: dev
+
+---
+server:
+  port: 8083
+spring:
+  profiles: dev #\u914D\u7F6E\u73AF\u5883\u7684\u540D\u79F0
+
+
+---
+
+server:
+  port: 8084
+spring:
+  profiles: prod  #\u914D\u7F6E\u73AF\u5883\u7684\u540D\u79F0
+

@@ -1,5 +1,7 @@
 package com.xjm.springboot16shiro2.config;
 
+import com.xjm.springboot16shiro2.mapper.UserMapper;
+import com.xjm.springboot16shiro2.pojo.User;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -10,12 +12,17 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author Panda
  * @create 2021-03-28 18:40
  */
 public class UserRealm extends AuthorizingRealm {
+
+    @Autowired
+    UserMapper userMapper;
+
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         System.out.println("执行了授权=>doGetAuthorizationInfo");
@@ -26,15 +33,15 @@ public class UserRealm extends AuthorizingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         System.out.println("执行了认证=>doGetAuthenticationInfo");
 
-        //用户名、密码  应该是数据库中取
-        String name = "root";
-        String password = "123456";
-
         UsernamePasswordToken token = (UsernamePasswordToken)authenticationToken;
-        if(!token.getUsername().equals(name)){
-            return null;//抛出异常
+        //连接真实数据库
+        User user = userMapper.queryUserByName(token.getUsername());
+
+        if (user == null) {
+            return null;
         }
-        //密码认证，shiro去做，不需要你做
-        return new SimpleAuthenticationInfo("",password,"");
+
+        //密码认证，shiro去做，不需要你做，密码加密了
+        return new SimpleAuthenticationInfo("",user.getPwd(),"");
     }
 }

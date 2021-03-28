@@ -5,6 +5,8 @@
     <packaging>pom</packaging>
     <modules>
         <module>springboot-04-starter</module>
+        <module>springboot-15-shiro</module>
+        <module>springboot-16-shiro2</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

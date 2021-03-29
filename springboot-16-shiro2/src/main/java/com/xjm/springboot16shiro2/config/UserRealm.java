@@ -11,6 +11,7 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,8 +53,12 @@ public class UserRealm extends AuthorizingRealm {
         User user = userMapper.queryUserByName(token.getUsername());
 
         if (user == null) {
-            return null;
+            return null;//UnknownAccountException
         }
+
+        Subject currentSubject = SecurityUtils.getSubject();
+        Session session = currentSubject.getSession();
+        session.setAttribute("loginUser",user);
 
         //密码认证，shiro去做，不需要你做，密码加密了
         return new SimpleAuthenticationInfo(user,user.getPwd(),"");

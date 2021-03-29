@@ -9,6 +9,7 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
@@ -23,12 +24,25 @@ public class UserRealm extends AuthorizingRealm {
     @Autowired
     UserMapper userMapper;
 
+    //授权
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         System.out.println("执行了授权=>doGetAuthorizationInfo");
-        return null;
+        SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
+        info.addStringPermission("user:add");
+
+        //拿到当前登录的对象
+        Subject subject = SecurityUtils.getSubject();
+        User currentUser = (User)subject.getPrincipal();//拿到user对象
+
+        //设置当前用户的权限
+        info.addStringPermission(currentUser.getPerms());
+
+
+        return info;
     }
 
+    //认证
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         System.out.println("执行了认证=>doGetAuthenticationInfo");
@@ -42,6 +56,6 @@ public class UserRealm extends AuthorizingRealm {
         }
 
         //密码认证，shiro去做，不需要你做，密码加密了
-        return new SimpleAuthenticationInfo("",user.getPwd(),"");
+        return new SimpleAuthenticationInfo(user,user.getPwd(),"");
     }
 }

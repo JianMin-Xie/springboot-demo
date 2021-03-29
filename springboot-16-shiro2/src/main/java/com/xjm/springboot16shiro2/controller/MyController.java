@@ -9,6 +9,7 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * @author Panda
@@ -53,5 +54,18 @@ public class MyController {
             return "login";
         }
 
+    }
+
+    @RequestMapping("/noauth")
+    @ResponseBody
+    public String noauth(){
+        return "未经授权无法访问此页面";
+    }
+
+    @RequestMapping("/user/logout")
+    public String logOut(){
+        Subject currentUser = SecurityUtils.getSubject();
+        currentUser.logout();
+        return "login";
     }
 }
